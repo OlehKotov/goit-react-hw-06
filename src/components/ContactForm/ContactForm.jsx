@@ -4,6 +4,7 @@ import { FORM_INITIAL_VALUES } from "../../utils/constants";
 import { useId } from "react";
 import * as Yup from "yup";
 import { nanoid } from "nanoid";
+import { useDispatch } from "react-redux";
 import { addContact } from "../../redux/contactsSlice";
 
 const ContactSchema = Yup.object().shape({
@@ -12,10 +13,12 @@ const ContactSchema = Yup.object().shape({
 });
 
 
-const ContactForm = ({ onAddUser }) => {
+const ContactForm = () => {
   const nameFieldId = useId();
   const numberFieldId = useId();
 
+  const dispatch = useDispatch();
+  
   const onAddUser = (formData) => {
     const finalContact = {
       id: nanoid(),
