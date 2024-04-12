@@ -7,7 +7,7 @@ const SearchBox = ({onChangeFilter, filter}) => {
   return (
     <div className={css.search}>
         <h3 className={css.searchHeader}>Find contacts by name</h3>
-        <input className={css.searchInput} type="text" value={filter} onChange={onChangeFilter}></input>
+        <input className={css.searchInput} type="text" value={filter !== undefined && filter !== null ? filter : ""} onChange={onChangeFilter}></input>
     </div>
   )
 }

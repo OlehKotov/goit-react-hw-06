@@ -1,60 +1,62 @@
-import { useEffect, useState } from "react";
+// import { useEffect } from "react";
 import css from "./App.module.css";
 import ContactForm from "./components/ContactForm/ContactForm";
 import SearchBox from "./components/SearchBox/SearchBox";
 import { ContactList } from "./components/ContactList/ContactList";
 import { nanoid } from "nanoid";
+import { useSelector, useDispatch } from "react-redux";
+import { useMemo } from "react";
+import { addContact, deleteContact } from "./redux/contactsSlice";
+import { changeFilter } from "./redux/filtersSlice";
 
-const initialContacts = [
-  { id: "id-1", name: "Rosie Simpson", number: "459-12-56" },
-  { id: "id-2", name: "Hermione Kline", number: "443-89-12" },
-  { id: "id-3", name: "Eden Clements", number: "645-17-79" },
-  { id: "id-4", name: "Annie Copeland", number: "227-91-26" },
-];
 
 function App() {
-  const [contacts, setContacts] = useState(() => {
-    const stringifiedContacts = localStorage.getItem("contacts");
-    if (!stringifiedContacts) return initialContacts;
-    const parsedContacts = JSON.parse(stringifiedContacts);
-    return parsedContacts;
-  });
+  
+  const dispatch = useDispatch();
+  const selectContacts = useSelector((state) => state.contact.contacts.items);
+  const selectNameFilter = useSelector((state) => state.filter.filters.name);
 
-  useEffect(() => {
-    localStorage.setItem("contacts", JSON.stringify(contacts));
-  }, [contacts]);
+  // useEffect(() => {
+  //   localStorage.setItem("contacts", JSON.stringify(contacts));
+  // }, [contacts]);
 
   const onAddUser = (formData) => {
     const finalContact = {
       id: nanoid(),
       ...formData,
     };
-    setContacts((prevState) => [...prevState, finalContact]);
+    dispatch(addContact(finalContact));
   };
 
   const onDeleteContact = (contactId) => {
-    setContacts((prevContact) =>
-      prevContact.filter((contact) => contact.id !== contactId)
-    );
+    dispatch(deleteContact(contactId));
   };
 
-  const [filter, setFilter] = useState("");
   const onChangeFilter = (event) => {
-    setFilter(event.target.value);
+    dispatch(changeFilter(event.currentTarget.value));
   };
-  const filteredContacts = contacts.filter((contact) =>
-    contact.name.toLowerCase().includes(filter.toLowerCase()) || contact.number.toString().includes(filter)
+ 
+
+  const filteredContacts = useMemo(
+    () =>
+    selectContacts.filter((contact) => {
+        return (
+          contact.name.toLowerCase().includes(selectNameFilter.toLowerCase()) ||
+          contact.number.toLowerCase().includes(selectNameFilter.toLowerCase())
+        );
+      }),
+    [selectNameFilter, selectContacts]
   );
 
   return (
     <div>
       <h1 className={css.header}>Phonebook</h1>
       <ContactForm onAddUser={onAddUser} />
-      <SearchBox onChangeFilter={onChangeFilter} filter={filter} />
+      <SearchBox onChangeFilter={onChangeFilter} filter={selectNameFilter} />
       <ContactList
         contacts={filteredContacts}
         onDeleteContact={onDeleteContact}
-      />
+      />  
     </div>
   );
 }
