@@ -1,4 +1,4 @@
-// import { useEffect } from "react";
+
 import css from "./App.module.css";
 import ContactForm from "./components/ContactForm/ContactForm";
 import SearchBox from "./components/SearchBox/SearchBox";
@@ -15,10 +15,6 @@ function App() {
   const dispatch = useDispatch();
   const selectContacts = useSelector((state) => state.contact.contacts.items);
   const selectNameFilter = useSelector((state) => state.filter.filters.name);
-
-  // useEffect(() => {
-  //   localStorage.setItem("contacts", JSON.stringify(contacts));
-  // }, [contacts]);
 
   const onAddUser = (formData) => {
     const finalContact = {
